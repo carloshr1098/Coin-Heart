@@ -4,18 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Coin Heart</title>
+  
   <link rel="manifest" href="./manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Coin Heart">
-  <link rel="apple-touch-icon" href="./logo.jpg">
+  <link rel="apple-touch-icon" href="./logo.png">
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { theme: { extend: { colors: { navy: '#0f172a', lightblue: '#38bdf8' } } } }</script>
+  
   <script type="importmap">
     {
       "imports": {
         "vue": "https://cdn.jsdelivr.net/npm/vue@3/dist/vue.esm-browser.js",
-        "pinia": "https://cdn.jsdelivr.net/npm/pinia@2/dist/pinia.esm-browser.js"
+        "vue-demi": "https://cdn.jsdelivr.net/npm/vue-demi/lib/v3/index.mjs",
+        "pinia": "https://cdn.jsdelivr.net/npm/pinia@2/dist/pinia.esm-browser.js",
+        "@vue/devtools-api": "https://cdn.jsdelivr.net/npm/@vue/devtools-api/lib/esm/index.js"
       }
     }
   </script>
@@ -55,10 +60,10 @@
           <div class="flex items-center justify-around">
             <div class="w-20 h-20 rounded-full transition-all duration-500" :style="{ background: store.datosGrafica }"></div>
             <div class="text-[10px] space-y-1.5 w-1/2">
-              <div class="flex items-center"><span class="w-2 h-2 bg-red-400 rounded-full mr-2"></span> Diario (-${{ store.totalGastosGenerales.toFixed(2) }})</div>
-              <div class="flex items-center"><span class="w-2 h-2 bg-lightblue rounded-full mr-2"></span> MSI (-${{ store.msiPendientes.toFixed(2) }})</div>
-              <div class="flex items-center"><span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span> Fijos (-${{ store.serviciosPendientes.toFixed(2) }})</div>
-              <div class="flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span> Ahorro (+${{ store.totalAhorrado.toFixed(2) }})</div>
+              <div class="flex items-center"><span class="w-2 h-2 bg-red-400 rounded-full mr-2 shrink-0"></span> Diario (-${{ store.totalGastosGenerales.toFixed(2) }})</div>
+              <div class="flex items-center"><span class="w-2 h-2 bg-lightblue rounded-full mr-2 shrink-0"></span> MSI (-${{ store.msiPendientes.toFixed(2) }})</div>
+              <div class="flex items-center"><span class="w-2 h-2 bg-purple-500 rounded-full mr-2 shrink-0"></span> Fijos (-${{ store.serviciosPendientes.toFixed(2) }})</div>
+              <div class="flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-2 shrink-0"></span> Ahorro (+${{ store.totalAhorrado.toFixed(2) }})</div>
             </div>
           </div>
         </section>
@@ -102,6 +107,7 @@
             </div>
             <p class="text-sm font-bold text-red-400">-${{ item.monto_mensual.toFixed(2) }}</p>
           </div>
+          <p v-if="store.compromisos.length === 0" class="text-xs text-slate-600 text-center py-2">No hay deudas activas.</p>
         </section>
 
         <section>
@@ -116,6 +122,7 @@
             </div>
             <p class="text-sm font-bold text-green-400">+${{ a.monto.toFixed(2) }}</p>
           </div>
+          <p v-if="store.ahorros.length === 0" class="text-xs text-slate-600 text-center py-2">No tienes ahorros guardados.</p>
         </section>
 
         <section>
@@ -133,6 +140,7 @@
             </div>
             <p class="text-sm font-bold text-purple-400">-${{ s.monto.toFixed(2) }}</p>
           </div>
+          <p v-if="store.servicios.length === 0" class="text-xs text-slate-600 text-center py-2">No hay servicios fijos.</p>
         </section>
 
         <footer class="text-center pt-8 pb-4">
@@ -206,12 +214,12 @@
 
               <div v-if="!view.includes('pay')">
                 <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Monto ($)</label>
-                <input v-model="form.monto" type="number" min="0" placeholder="0.00" class="w-full bg-slate-800 p-4 rounded-xl mt-2 text-3xl font-black outline-none border border-slate-700 shadow-inner">
+                <input v-model="form.monto" type="number" min="0" inputmode="decimal" @keydown="['-', 'e', '+'].includes($event.key) && $event.preventDefault()" placeholder="0.00" class="w-full bg-slate-800 p-4 rounded-xl mt-2 text-3xl font-black outline-none border border-slate-700 shadow-inner">
               </div>
 
               <div v-if="view === 'add-msi'">
                 <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Plazo (Meses)</label>
-                <input v-model="form.msi" type="number" min="1" placeholder="12" class="w-full bg-slate-800 p-4 rounded-xl mt-2 outline-none border border-slate-700 text-sm shadow-inner">
+                <input v-model="form.msi" type="number" min="1" inputmode="numeric" @keydown="['-', 'e', '+', '.'].includes($event.key) && $event.preventDefault()" placeholder="12" class="w-full bg-slate-800 p-4 rounded-xl mt-2 outline-none border border-slate-700 text-sm shadow-inner">
               </div>
 
               <div class="pt-6 space-y-3">

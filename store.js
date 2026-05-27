@@ -15,12 +15,11 @@ export const useGastosStore = defineStore('gastos', () => {
     { id: 6, concepto: 'Spotify', monto: 149, pagado_este_mes: false }
   ]);
 
-  // NUEVAS VARIABLES PARA SEGURIDAD DEL NUEVO MES
+  // Variables de Seguridad para Nuevo Mes
   const confirmandoMes = ref(false);
   const codigoConfirmacion = ref('');
   const inputConfirmacion = ref('');
 
-  // Manejo de Fechas
   const getLocalDateISO = (date) => {
     const offset = date.getTimezoneOffset() * 60000;
     return (new Date(date - offset)).toISOString().split('T')[0];
@@ -46,7 +45,6 @@ export const useGastosStore = defineStore('gastos', () => {
     filtroFecha.value = getLocalDateISO(current);
   }
 
-  // Cálculos con 2 decimales
   const totalIngresos = computed(() => ingresos.value.reduce((s, i) => s + i.monto, 0));
   const msiPendientes = computed(() => compromisos.value.filter(c => !c.pagado_este_mes).reduce((s, i) => s + i.monto_mensual, 0));
   const serviciosPendientes = computed(() => servicios.value.filter(s => !s.pagado_este_mes).reduce((s, i) => s + i.monto, 0));
@@ -73,7 +71,6 @@ export const useGastosStore = defineStore('gastos', () => {
     return `conic-gradient(#f87171 0% ${pD}%, #38bdf8 ${pD}% ${pD+pM}%, #a855f7 ${pD+pM}% ${pD+pM+pS}%, #4ade80 ${pD+pM+pS}% 100%)`;
   });
 
-  // Acciones (Protección contra negativos con Math.abs)
   function addIngreso(c, m) { ingresos.value.push({ id: Date.now(), concepto: c, monto: Math.abs(Number(m)) }); }
   function addMSI(c, t, m) { compromisos.value.push({ id: Date.now(), tipo: 'msi', concepto: c, monto_mensual: Number((Math.abs(Number(t))/Number(m)).toFixed(2)), pago_actual: 1, msi_totales: Number(m), pagado_este_mes: false }); }
   function addServicio(c, m) { servicios.value.push({ id: Date.now(), concepto: c, monto: Math.abs(Number(m)), pagado_este_mes: false }); }
@@ -108,9 +105,7 @@ export const useGastosStore = defineStore('gastos', () => {
     servicios.value.forEach(s => s.pagado_este_mes = false); 
   }
 
-  // --- NUEVAS FUNCIONES DE SEGURIDAD ---
   function iniciarConfirmacionMes() {
-    // Genera un código de 6 dígitos
     codigoConfirmacion.value = Math.floor(100000 + Math.random() * 900000).toString();
     inputConfirmacion.value = '';
     confirmandoMes.value = true;
@@ -121,11 +116,10 @@ export const useGastosStore = defineStore('gastos', () => {
       reiniciarMes();
       confirmandoMes.value = false;
     } else {
-      alert('Código incorrecto. Por favor, verifica los números en pantalla.');
+      alert('Código incorrecto. Verifica los números.');
     }
   }
 
-  // Respaldo
   function exportarDatos() {
     const data = { ingresos: ingresos.value, compromisos: compromisos.value, servicios: servicios.value, ahorros: ahorros.value, gastosGenerales: gastosGenerales.value };
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
@@ -148,8 +142,7 @@ export const useGastosStore = defineStore('gastos', () => {
 
   return { 
     ingresos, compromisos, servicios, ahorros, gastosGenerales, filtroFecha, fechaMostrada, disponible, pendienteMes, msiPendientes, serviciosPendientes, totalAhorrado, totalGastosGenerales, gastosPorDia, datosGrafica,
-    confirmandoMes, codigoConfirmacion, inputConfirmacion, // Exportamos variables de seguridad
-    cambiarDia, addIngreso, addMSI, addServicio, addAhorro, addGastoGeneral, registrarPagoMSI, registrarPagoServicio, deleteGastoGeneral, deleteMSI, deleteServicio, deleteAhorro, reiniciarMes, exportarDatos, importarDatos,
-    iniciarConfirmacionMes, ejecutarNuevoMes // Exportamos funciones de seguridad
+    confirmandoMes, codigoConfirmacion, inputConfirmacion,
+    cambiarDia, addIngreso, addMSI, addServicio, addAhorro, addGastoGeneral, registrarPagoMSI, registrarPagoServicio, deleteGastoGeneral, deleteMSI, deleteServicio, deleteAhorro, reiniciarMes, exportarDatos, importarDatos, iniciarConfirmacionMes, ejecutarNuevoMes 
   };
 });
