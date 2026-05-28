@@ -15,7 +15,6 @@ export const useGastosStore = defineStore('gastos', () => {
     { id: 6, concepto: 'Spotify', monto: 149, pagado_este_mes: false }
   ]);
 
-  // Variables de Seguridad para Nuevo Mes
   const confirmandoMes = ref(false);
   const codigoConfirmacion = ref('');
   const inputConfirmacion = ref('');
@@ -95,6 +94,13 @@ export const useGastosStore = defineStore('gastos', () => {
     }
   }
 
+  // --- NUEVAS FUNCIONES DE INGRESOS ---
+  function deleteIngreso(id) { ingresos.value = ingresos.value.filter(i => i.id !== id); }
+  function updateIngreso(id, c, m) { 
+    const item = ingresos.value.find(i => i.id === id); 
+    if(item) { item.concepto = c; item.monto = Math.abs(Number(m)); } 
+  }
+
   function deleteGastoGeneral(id) { gastosGenerales.value = gastosGenerales.value.filter(g => g.id !== id); }
   function deleteMSI(id) { compromisos.value = compromisos.value.filter(c => c.id !== id); }
   function deleteServicio(id) { servicios.value = servicios.value.filter(s => s.id !== id); }
@@ -129,7 +135,7 @@ export const useGastosStore = defineStore('gastos', () => {
 
   function importarDatos(json) {
     const d = JSON.parse(json);
-    ingresos.value = d.ingresos; compromisos.value = d.compromisos; servicios.value = d.servicios || []; ahorros.value = d.ahorros; gastosGenerales.value = d.gastosGenerales;
+    ingresos.value = d.ingresos || []; compromisos.value = d.compromisos; servicios.value = d.servicios || []; ahorros.value = d.ahorros; gastosGenerales.value = d.gastosGenerales;
   }
 
   watch([ingresos, compromisos, servicios, ahorros, gastosGenerales], () => {
@@ -143,6 +149,6 @@ export const useGastosStore = defineStore('gastos', () => {
   return { 
     ingresos, compromisos, servicios, ahorros, gastosGenerales, filtroFecha, fechaMostrada, disponible, pendienteMes, msiPendientes, serviciosPendientes, totalAhorrado, totalGastosGenerales, gastosPorDia, datosGrafica,
     confirmandoMes, codigoConfirmacion, inputConfirmacion,
-    cambiarDia, addIngreso, addMSI, addServicio, addAhorro, addGastoGeneral, registrarPagoMSI, registrarPagoServicio, deleteGastoGeneral, deleteMSI, deleteServicio, deleteAhorro, reiniciarMes, exportarDatos, importarDatos, iniciarConfirmacionMes, ejecutarNuevoMes 
+    cambiarDia, addIngreso, deleteIngreso, updateIngreso, addMSI, addServicio, addAhorro, addGastoGeneral, registrarPagoMSI, registrarPagoServicio, deleteGastoGeneral, deleteMSI, deleteServicio, deleteAhorro, reiniciarMes, exportarDatos, importarDatos, iniciarConfirmacionMes, ejecutarNuevoMes 
   };
 });
