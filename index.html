@@ -4,16 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Coin Heart</title>
-  
   <link rel="manifest" href="./manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Coin Heart">
   <link rel="apple-touch-icon" href="./logo.png">
-  
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { theme: { extend: { colors: { navy: '#0f172a', lightblue: '#38bdf8' } } } }</script>
-  
   <script type="importmap">
     {
       "imports": {
@@ -26,11 +23,11 @@
   </script>
 </head>
 <body class="bg-slate-950 text-slate-200 antialiased">
-  <!-- AQUÍ ESTÁ LA MAGIA: pt-14 (56px) forza el espacio para la Isla Dinámica -->
   <div id="app" class="max-w-md mx-auto min-h-screen bg-slate-900 shadow-2xl flex flex-col relative pt-14">
     
-    <!-- DASHBOARD PRINCIPAL -->
-    <div v-if="view === 'home'" class="flex flex-col min-h-screen">
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div v-if="view === 'home'" class="flex flex-col min-h-screen pb-24">
+      
       <header class="bg-navy px-6 pb-6 rounded-b-3xl shadow-lg border-b border-slate-800">
         <div class="flex justify-between items-center mb-6">
           <div class="flex items-center space-x-3">
@@ -41,16 +38,13 @@
         </div>
         
         <div class="grid grid-cols-2 gap-4 text-center">
-          <!-- TARJETA DISPONIBLE REAL (Limpia, sin botones duplicados) -->
           <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50 flex flex-col justify-between">
             <div class="flex justify-between items-center mb-1">
               <p class="text-[10px] text-lightblue font-bold uppercase mt-1">Disponible Real</p>
               <button @click="view = 'manage-ingresos'" class="text-xs opacity-60 hover:opacity-100 hover:scale-110 transition-all">✏️</button>
             </div>
-            <p class="text-2xl font-black text-white text-left">${{ store.disponible.toFixed(2) }}</p>
+            <p class="text-2xl font-black text-white text-left mb-3">${{ store.disponible.toFixed(2) }}</p>
           </div>
-          
-          <!-- TARJETA PENDIENTE -->
           <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50 flex flex-col justify-between">
             <p class="text-[10px] text-red-400 font-bold uppercase text-left mt-1">Pendiente de Mes</p>
             <p class="text-2xl font-black text-white text-left">${{ store.pendienteMes.toFixed(2) }}</p>
@@ -59,116 +53,212 @@
         </div>
       </header>
 
-      <main class="p-6 flex-grow overflow-auto space-y-8 pb-[calc(env(safe-area-inset-bottom)+3rem)]">
+      <main class="p-6 flex-grow overflow-auto space-y-8">
         
-        <!-- SECCIÓN DE GRÁFICA Y BOTONES PRINCIPALES -->
-        <section class="bg-slate-800/40 p-4 rounded-2xl border border-slate-800 flex flex-col space-y-5">
-          <div class="flex items-center justify-around">
-            <div class="w-20 h-20 rounded-full transition-all duration-500" :style="{ background: store.datosGrafica }"></div>
-            <div class="text-[10px] space-y-1.5 w-1/2">
-              <div class="flex items-center"><span class="w-2 h-2 bg-red-400 rounded-full mr-2 shrink-0"></span> Diario (-${{ store.totalGastosGenerales.toFixed(2) }})</div>
-              <div class="flex items-center"><span class="w-2 h-2 bg-lightblue rounded-full mr-2 shrink-0"></span> MSI (-${{ store.msiPendientes.toFixed(2) }})</div>
-              <div class="flex items-center"><span class="w-2 h-2 bg-purple-500 rounded-full mr-2 shrink-0"></span> Fijos (-${{ store.serviciosPendientes.toFixed(2) }})</div>
-              <div class="flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-2 shrink-0"></span> Ahorro (+${{ store.totalAhorrado.toFixed(2) }})</div>
-            </div>
-          </div>
+        <!-- ======================= -->
+        <!-- PESTAÑA 1: INICIO -->
+        <!-- ======================= -->
+        <div v-show="tab === 'home'" class="space-y-6">
           
-          <div class="flex space-x-3 pt-2 border-t border-slate-700/50">
-            <button @click="view = 'add-ingreso'" class="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-400 py-2.5 rounded-xl border border-green-500/20 font-bold text-xs flex items-center justify-center transition-colors">
-              <span class="mr-1 text-sm">+</span> Ingreso
-            </button>
-            <button @click="view = 'add-gasto'" class="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 py-2.5 rounded-xl border border-red-500/20 font-bold text-xs flex items-center justify-center transition-colors">
-              <span class="mr-1 text-sm">-</span> Gasto
-            </button>
+          <div class="bg-gradient-to-r from-slate-800 to-slate-800/50 p-5 rounded-2xl border border-slate-700/50 text-center shadow-lg relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 text-6xl opacity-5">💸</div>
+            <p class="text-[10px] text-green-400 font-bold uppercase tracking-widest mb-1">Presupuesto Diario Seguro</p>
+            <p class="text-4xl font-black text-white">${{ store.presupuestoDiario.toFixed(2) }}</p>
+            <p class="text-[10px] text-slate-500 mt-2 font-bold uppercase">Restan {{ store.diasRestantesMes }} días del mes</p>
           </div>
-        </section>
 
-        <!-- SECCIÓN DE GASTOS DIARIOS -->
-        <section>
-          <div class="flex items-center justify-between bg-slate-800 rounded-2xl p-2 border border-slate-700 mb-4">
-            <button @click="store.cambiarDia(-1)" class="w-8 h-8">←</button>
-            <div class="text-xs font-bold text-lightblue uppercase">{{ store.fechaMostrada }}</div>
-            <button @click="store.cambiarDia(1)" class="w-8 h-8">→</button>
-          </div>
-          <div v-for="grupo in store.gastosPorDia" class="bg-slate-800/60 rounded-2xl border border-slate-800 divide-y divide-slate-700/30">
-            <div v-for="gasto in grupo.gastos" class="p-4 flex justify-between items-center">
-              <div class="flex items-center space-x-3 w-3/4">
-                <button @click="store.deleteGastoGeneral(gasto.id)" class="text-red-500/40 text-lg">×</button>
-                <p class="text-sm truncate">{{ gasto.concepto }}</p>
+          <!-- NUEVO MÓDULO: SALARIO Y PROYECCIÓN MENSAL -->
+          <section class="bg-slate-800/40 p-4 rounded-2xl border border-slate-800">
+             <div class="flex justify-between items-center mb-4 border-b border-slate-700/50 pb-2">
+                <h2 class="text-xs font-bold text-slate-500 uppercase">Mi Salario (Quincenal)</h2>
+                <button @click="prepararConfigSalario" class="text-xs opacity-60 hover:opacity-100 hover:scale-110">✏️</button>
+             </div>
+
+             <div v-if="store.salarioQuincenal > 0">
+                <div class="flex justify-between items-end mb-4">
+                   <div>
+                      <p class="text-xl font-black text-green-400">${{ store.salarioQuincenal.toFixed(2) }}</p>
+                   </div>
+                   <button @click="store.cobrarQuincena" class="text-[10px] font-black text-navy bg-lightblue px-4 py-2 rounded-xl active:scale-95 transition-transform uppercase shadow-lg shadow-lightblue/20">
+                      💸 Cobrar
+                   </button>
+                </div>
+                <div class="bg-slate-900/50 rounded-xl p-3 border border-slate-800/50 space-y-2">
+                   <div class="flex justify-between text-[10px] font-bold text-slate-400">
+                      <span>Ingreso Mes (2 Quincenas)</span>
+                      <span class="text-slate-200">${{ (store.salarioQuincenal * 2).toFixed(2) }}</span>
+                   </div>
+                   <div class="flex justify-between text-[10px] font-bold text-red-400">
+                      <span>Fijos y MSI</span>
+                      <span>-${{ store.totalCompromisosMes.toFixed(2) }}</span>
+                   </div>
+                   <div class="flex justify-between text-xs font-black pt-2 border-t border-slate-800">
+                      <span class="text-slate-300">Libre Proyectado</span>
+                      <span class="text-lightblue">${{ store.libreProyectado.toFixed(2) }}</span>
+                   </div>
+                </div>
+             </div>
+             
+             <div v-else class="text-center py-4">
+                <p class="text-xs text-slate-500 mb-3">Configura tu salario para ver tu proyección mensual.</p>
+                <button @click="prepararConfigSalario" class="text-[10px] font-black text-navy bg-lightblue px-4 py-2 rounded-xl uppercase">Configurar</button>
+             </div>
+          </section>
+
+          <section class="bg-slate-800/40 p-4 rounded-2xl border border-slate-800 flex flex-col space-y-5">
+            <div class="flex items-center justify-around">
+              <div class="w-20 h-20 rounded-full transition-all duration-500" :style="{ background: store.datosGrafica }"></div>
+              <div class="text-[10px] space-y-1.5 w-1/2">
+                <div class="flex items-center"><span class="w-2 h-2 bg-red-400 rounded-full mr-2 shrink-0"></span> Diario (-${{ store.totalGastosGenerales.toFixed(2) }})</div>
+                <div class="flex items-center"><span class="w-2 h-2 bg-lightblue rounded-full mr-2 shrink-0"></span> MSI (-${{ store.msiPendientes.toFixed(2) }})</div>
+                <div class="flex items-center"><span class="w-2 h-2 bg-purple-500 rounded-full mr-2 shrink-0"></span> Fijos (-${{ store.serviciosPendientes.toFixed(2) }})</div>
+                <div class="flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-2 shrink-0"></span> Ahorro (+${{ store.totalAhorrado.toFixed(2) }})</div>
               </div>
-              <p class="text-sm font-bold text-red-400 shrink-0">-${{ gasto.monto.toFixed(2) }}</p>
             </div>
-          </div>
-          <p v-if="store.gastosPorDia.length === 0" class="text-center text-slate-600 text-xs py-4">No hubo gastos este día</p>
-        </section>
+            <div class="flex space-x-3 pt-2 border-t border-slate-700/50">
+              <button @click="view = 'add-ingreso'" class="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-400 py-2.5 rounded-xl border border-green-500/20 font-bold text-xs flex items-center justify-center transition-colors">
+                <span class="mr-1 text-sm">+</span> Ingreso
+              </button>
+              <button @click="view = 'add-gasto'" class="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 py-2.5 rounded-xl border border-red-500/20 font-bold text-xs flex items-center justify-center transition-colors">
+                <span class="mr-1 text-sm">-</span> Gasto
+              </button>
+            </div>
+          </section>
+        </div>
 
-        <!-- SECCIÓN COMPRAS A MESES -->
-        <section>
-          <div class="flex justify-between items-end mb-3">
-              <h2 class="text-xs font-bold text-slate-500 uppercase">Compras a Meses</h2>
-              <div class="flex space-x-3 text-[10px] font-black uppercase text-lightblue">
-                <button @click="view = 'pay-msi'" class="text-green-400">✔ Pagar</button>
-                <button @click="view = 'add-msi'">+ Nuevo</button>
+        <!-- ======================= -->
+        <!-- PESTAÑA 2: GASTOS -->
+        <!-- ======================= -->
+        <div v-show="tab === 'gastos'" class="space-y-8">
+          <section>
+            <div class="flex justify-between items-end mb-3">
+                <h2 class="text-xs font-bold text-slate-500 uppercase">Historial Diario</h2>
+            </div>
+            <div class="flex items-center justify-between bg-slate-800 rounded-2xl p-2 border border-slate-700 mb-4 shadow-lg">
+              <button @click="store.cambiarDia(-1)" class="w-8 h-8">←</button>
+              <div class="text-xs font-bold text-lightblue uppercase">{{ store.fechaMostrada }}</div>
+              <button @click="store.cambiarDia(1)" class="w-8 h-8">→</button>
+            </div>
+            <div v-for="grupo in store.gastosPorDia" class="bg-slate-800/60 rounded-2xl border border-slate-800 divide-y divide-slate-700/30 shadow-lg">
+              <div v-for="gasto in grupo.gastos" class="p-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3 w-3/4">
+                  <button @click="store.deleteGastoGeneral(gasto.id)" class="text-red-500/40 text-lg hover:text-red-500">×</button>
+                  <p class="text-sm truncate">{{ gasto.concepto }}</p>
+                </div>
+                <p class="text-sm font-bold text-red-400 shrink-0">-${{ gasto.monto.toFixed(2) }}</p>
               </div>
-          </div>
-          <div v-for="item in store.compromisos" :class="['p-4 rounded-2xl border mb-3 flex justify-between items-center transition-opacity', item.pagado_este_mes ? 'opacity-40 border-slate-800' : 'bg-slate-800 border-slate-700']">
-            <div class="w-2/3">
+            </div>
+            <p v-if="store.gastosPorDia.length === 0" class="text-center text-slate-600 text-xs py-4">No hubo gastos este día</p>
+          </section>
+
+          <section>
+            <div class="flex justify-between items-end mb-3">
+                <h2 class="text-xs font-bold text-slate-500 uppercase">Servicios Fijos</h2>
+                <div class="flex space-x-3 text-[10px] font-black uppercase text-lightblue">
+                  <button @click="view = 'pay-servicio'" class="text-green-400">✔ Pagar</button>
+                  <button @click="view = 'add-servicio'">+ Nuevo</button>
+                </div>
+            </div>
+            <div v-for="s in store.servicios" :class="['p-4 rounded-2xl border mb-3 flex justify-between items-center transition-opacity shadow-lg', s.pagado_este_mes ? 'opacity-40 border-slate-800' : 'bg-slate-800 border-slate-700']">
               <div class="flex items-center space-x-2">
-                <button @click="store.deleteMSI(item.id)" class="text-red-500/40">×</button>
-                <p class="text-sm font-bold truncate">{{ item.concepto }}</p>
+                <button @click="store.deleteServicio(s.id)" class="text-red-500/40 hover:text-red-500">×</button>
+                <p class="text-sm font-bold">{{ s.concepto }}</p>
               </div>
-              <p class="text-[9px] text-slate-500 ml-5">Pago {{ item.pago_actual }} de {{ item.msi_totales }}</p>
-              <div class="w-full bg-slate-700 h-1 mt-2 ml-5 overflow-hidden rounded-full">
-                <div class="bg-lightblue h-full" :style="{ width: (item.pago_actual / item.msi_totales) * 100 + '%' }"></div>
+              <p class="text-sm font-bold text-purple-400">-${{ s.monto.toFixed(2) }}</p>
+            </div>
+            <p v-if="store.servicios.length === 0" class="text-xs text-slate-600 text-center py-2">No hay servicios fijos.</p>
+          </section>
+        </div>
+
+        <!-- ======================= -->
+        <!-- PESTAÑA 3: TARJETAS -->
+        <!-- ======================= -->
+        <div v-show="tab === 'tarjetas'" class="space-y-8">
+          <section>
+            <div class="flex justify-between items-end mb-3">
+                <h2 class="text-xs font-bold text-slate-500 uppercase">Mis Tarjetas</h2>
+                <button @click="view = 'add-tarjeta'" class="text-lightblue text-[10px] font-black uppercase">+ Añadir</button>
+            </div>
+            <div v-for="t in store.estadoTarjetas" :key="t.id" class="bg-slate-800/40 p-4 rounded-2xl border border-slate-800 mb-3 flex items-center justify-between shadow-lg">
+               <div>
+                  <div class="flex items-center space-x-2">
+                     <button @click="store.deleteTarjeta(t.id)" class="text-red-500/40 hover:text-red-500 transition-colors">×</button>
+                     <p class="text-sm font-bold text-white">{{ t.nombre }}</p>
+                  </div>
+                  <p class="text-[9px] ml-5 mt-0.5 uppercase tracking-wider font-bold" 
+                     :class="t.estado === 'urgente' ? 'text-red-400' : (t.estado === 'pendiente' ? 'text-yellow-400' : 'text-slate-500')">
+                     {{ t.mensaje }}
+                  </p>
+               </div>
+               <button @click="prepararPagoTarjeta(t)" class="text-[10px] font-black text-navy bg-lightblue px-4 py-2 rounded-xl active:scale-95 transition-transform uppercase">Pagar</button>
+            </div>
+            <p v-if="store.tarjetas.length === 0" class="text-xs text-slate-600 text-center py-6">Comienza registrando tus tarjetas.</p>
+          </section>
+
+          <section>
+            <div class="flex justify-between items-end mb-3">
+                <h2 class="text-xs font-bold text-slate-500 uppercase">Compras a Meses (MSI)</h2>
+                <div class="flex space-x-3 text-[10px] font-black uppercase text-lightblue">
+                  <button @click="view = 'pay-msi'" class="text-green-400">✔ Pagar</button>
+                  <button @click="view = 'add-msi'">+ Nuevo</button>
+                </div>
+            </div>
+            <div v-for="item in store.compromisos" :class="['p-4 rounded-2xl border mb-3 flex justify-between items-center transition-opacity shadow-lg', item.pagado_este_mes ? 'opacity-40 border-slate-800' : 'bg-slate-800 border-slate-700']">
+              <div class="w-2/3">
+                <div class="flex items-center space-x-2">
+                  <button @click="store.deleteMSI(item.id)" class="text-red-500/40 hover:text-red-500">×</button>
+                  <button @click="prepararEdicionMSI(item)" class="text-slate-500 hover:text-white text-xs ml-1">✏️</button>
+                  <p class="text-sm font-bold truncate text-white ml-2">{{ item.concepto }}</p>
+                </div>
+                <p class="text-[9px] text-lightblue font-bold ml-11 mt-1">{{ store.tarjetas.find(t => t.id === item.tarjeta_id)?.nombre || 'Tarjeta no asignada' }}</p>
+                <p class="text-[9px] text-slate-500 ml-11 mt-1">Pago {{ item.pago_actual }} de {{ item.msi_totales }}</p>
+                <div class="w-full bg-slate-700 h-1 mt-1.5 ml-11 overflow-hidden rounded-full">
+                  <div class="bg-lightblue h-full" :style="{ width: (item.pago_actual / item.msi_totales) * 100 + '%' }"></div>
+                </div>
               </div>
+              <p class="text-sm font-bold text-red-400">-${{ item.monto_mensual.toFixed(2) }}</p>
             </div>
-            <p class="text-sm font-bold text-red-400">-${{ item.monto_mensual.toFixed(2) }}</p>
-          </div>
-          <p v-if="store.compromisos.length === 0" class="text-xs text-slate-600 text-center py-2">No hay deudas activas.</p>
-        </section>
+            <p v-if="store.compromisos.length === 0" class="text-xs text-slate-600 text-center py-2">No hay compras a MSI activas.</p>
+          </section>
+        </div>
 
-        <!-- SECCIÓN AHORRO -->
-        <section>
-          <div class="flex justify-between items-end mb-3">
-              <h2 class="text-xs font-bold text-slate-500 uppercase">Metas de Ahorro</h2>
-              <button @click="view = 'add-ahorro'" class="text-lightblue text-[10px] font-black uppercase">+ Apartar</button>
-          </div>
-          <div v-for="a in store.ahorros" class="bg-slate-800/40 p-4 rounded-2xl border border-slate-800 flex justify-between items-center mb-3">
-            <div class="flex items-center space-x-2">
-              <button @click="store.deleteAhorro(a.id)" class="text-red-500/40">×</button>
-              <p class="text-sm font-bold">{{ a.meta }}</p>
+        <!-- ======================= -->
+        <!-- PESTAÑA 4: AHORRO -->
+        <!-- ======================= -->
+        <div v-show="tab === 'ahorros'" class="space-y-8">
+          <section>
+            <div class="flex justify-between items-end mb-3">
+                <h2 class="text-xs font-bold text-slate-500 uppercase">Mis Metas de Ahorro</h2>
+                <button @click="view = 'add-ahorro'" class="text-lightblue text-[10px] font-black uppercase">+ Apartar</button>
             </div>
-            <p class="text-sm font-bold text-green-400">+${{ a.monto.toFixed(2) }}</p>
-          </div>
-          <p v-if="store.ahorros.length === 0" class="text-xs text-slate-600 text-center py-2">No tienes ahorros guardados.</p>
-        </section>
-
-        <!-- SECCIÓN SERVICIOS -->
-        <section>
-          <div class="flex justify-between items-end mb-3">
-              <h2 class="text-xs font-bold text-slate-500 uppercase">Servicios Mensuales</h2>
-              <div class="flex space-x-3 text-[10px] font-black uppercase text-lightblue">
-                <button @click="view = 'pay-servicio'" class="text-green-400">✔ Pagar</button>
-                <button @click="view = 'add-servicio'">+ Nuevo</button>
+            <div v-for="a in store.ahorros" class="bg-slate-800/40 p-4 rounded-2xl border border-slate-800 flex justify-between items-center mb-3 shadow-lg">
+              <div class="flex items-center space-x-2">
+                <button @click="store.deleteAhorro(a.id)" class="text-red-500/40 hover:text-red-500">×</button>
+                <p class="text-sm font-bold">{{ a.meta }}</p>
               </div>
-          </div>
-          <div v-for="s in store.servicios" :class="['p-4 rounded-2xl border mb-3 flex justify-between items-center transition-opacity', s.pagado_este_mes ? 'opacity-40 border-slate-800' : 'bg-slate-800 border-slate-700']">
-            <div class="flex items-center space-x-2">
-              <button @click="store.deleteServicio(s.id)" class="text-red-500/40">×</button>
-              <p class="text-sm font-bold">{{ s.concepto }}</p>
+              <p class="text-lg font-black text-green-400">+${{ a.monto.toFixed(2) }}</p>
             </div>
-            <p class="text-sm font-bold text-purple-400">-${{ s.monto.toFixed(2) }}</p>
-          </div>
-          <p v-if="store.servicios.length === 0" class="text-xs text-slate-600 text-center py-2">No hay servicios fijos.</p>
-        </section>
+            <p v-if="store.ahorros.length === 0" class="text-xs text-slate-600 text-center py-6">No tienes ahorros guardados. ¡Empieza hoy!</p>
+          </section>
+        </div>
 
-        <footer class="text-center pt-8 pb-4">
-          <p class="text-[9px] text-slate-600 uppercase tracking-widest">Diseñado por</p>
-          <p class="text-[10px] font-bold text-slate-500">Carlos E. Hernandez Rojas</p>
-        </footer>
       </main>
+
+      <nav class="fixed bottom-0 w-full max-w-md bg-slate-900 border-t border-slate-800 pb-[env(safe-area-inset-bottom)] flex z-40">
+         <button @click="tab = 'home'" :class="tab === 'home' ? 'text-lightblue' : 'text-slate-500'" class="flex-1 py-4 font-bold text-[10px] flex flex-col items-center justify-center transition-colors">
+            <span class="text-xl mb-1" :class="tab === 'home' ? 'grayscale-0' : 'grayscale'">🏠</span> INICIO
+         </button>
+         <button @click="tab = 'gastos'" :class="tab === 'gastos' ? 'text-lightblue' : 'text-slate-500'" class="flex-1 py-4 font-bold text-[10px] flex flex-col items-center justify-center transition-colors">
+            <span class="text-xl mb-1" :class="tab === 'gastos' ? 'grayscale-0' : 'grayscale'">💸</span> GASTOS
+         </button>
+         <button @click="tab = 'tarjetas'" :class="tab === 'tarjetas' ? 'text-lightblue' : 'text-slate-500'" class="flex-1 py-4 font-bold text-[10px] flex flex-col items-center justify-center transition-colors">
+            <span class="text-xl mb-1" :class="tab === 'tarjetas' ? 'grayscale-0' : 'grayscale'">💳</span> TARJETAS
+         </button>
+         <button @click="tab = 'ahorros'" :class="tab === 'ahorros' ? 'text-lightblue' : 'text-slate-500'" class="flex-1 py-4 font-bold text-[10px] flex flex-col items-center justify-center transition-colors">
+            <span class="text-xl mb-1" :class="tab === 'ahorros' ? 'grayscale-0' : 'grayscale'">🐷</span> AHORRO
+         </button>
+      </nav>
       
-      <!-- PANTALLA FLOTANTE: CONFIRMACIÓN NUEVO MES -->
       <div v-if="store.confirmandoMes" class="fixed inset-0 bg-slate-950/95 flex items-center justify-center p-8 z-50 backdrop-blur-sm">
           <div class="bg-slate-800 p-8 rounded-3xl w-full border border-slate-700 text-center shadow-2xl">
               <h3 class="text-white font-black text-lg mb-2 uppercase tracking-widest">¿Nuevo Mes?</h3>
@@ -183,12 +273,11 @@
       </div>
     </div>
 
-    <!-- NUEVA VISTA: GESTIONAR INGRESOS -->
-    <div v-else-if="view === 'manage-ingresos'" class="px-8 pb-8 min-h-screen bg-slate-900 flex flex-col justify-start">
-        <h2 class="text-lg font-black mb-8 text-center uppercase border-b border-slate-700 pb-4 text-lightblue tracking-widest mx-auto max-w-xs">
+    <!-- VISTA: GESTIONAR INGRESOS -->
+    <div v-else-if="view === 'manage-ingresos'" class="px-8 pb-8 min-h-screen bg-slate-900 flex flex-col justify-start pt-14">
+        <h2 class="text-lg font-black mb-8 text-center uppercase border-b border-slate-700 pb-4 text-lightblue tracking-widest mx-auto max-w-xs mt-4">
             MIS INGRESOS
         </h2>
-        
         <div class="space-y-4 flex-grow overflow-auto">
             <div v-for="ingreso in store.ingresos" :key="ingreso.id" class="bg-slate-800/70 p-5 rounded-2xl border border-slate-700 flex justify-between items-center shadow-lg">
                 <div>
@@ -200,24 +289,23 @@
                     <button @click="store.deleteIngreso(ingreso.id)" class="text-xl opacity-70 hover:opacity-100 transition-opacity">❌</button>
                 </div>
             </div>
-            
-            <div v-if="store.ingresos.length === 0" class="text-center py-10">
-                <p class="text-slate-500 text-sm">No tienes ingresos registrados actualmente.</p>
-            </div>
+            <div v-if="store.ingresos.length === 0" class="text-center py-10"><p class="text-slate-500 text-sm">No tienes ingresos registrados.</p></div>
         </div>
-
-        <button @click="view = 'home'" class="w-full text-slate-500 font-bold text-xs uppercase mt-8 pt-4 border-t border-slate-800">Volver al Dashboard</button>
+        <button @click="view = 'home'" class="w-full text-slate-500 font-bold text-xs uppercase mt-8 pt-4 border-t border-slate-800 pb-[env(safe-area-inset-bottom)]">Volver al Dashboard</button>
     </div>
 
     <!-- VISTAS DE FORMULARIOS -->
     <div v-else class="px-8 pb-8 min-h-screen bg-slate-900 flex flex-col justify-center">
         <h2 class="text-lg font-black mb-10 text-center uppercase border-b border-slate-700 pb-4 text-lightblue tracking-widest mx-auto max-w-xs">
             {{ 
+              view === 'config-salario' ? 'Tu Quincena' : 
               view === 'backup' ? 'Seguridad' : 
+              view === 'add-tarjeta' ? 'Nueva Tarjeta' :
               view === 'add-ingreso' ? 'Registrar Ingreso' : 
               view === 'edit-ingreso' ? 'Editar Ingreso' : 
               view === 'add-gasto' ? 'Registrar Gasto' : 
               view === 'add-msi' ? 'Nueva Compra a MSI' :
+              view === 'edit-msi' ? 'Editar MSI' :
               view === 'add-servicio' ? 'Nuevo Servicio Fijo' :
               view === 'add-ahorro' ? 'Nuevo Apartado' :
               view.includes('pay') ? 'Registrar Pago' : 'Nuevo Registro' 
@@ -227,17 +315,46 @@
         <div class="space-y-6">
             <div v-if="view === 'backup'" class="space-y-4">
               <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 text-center space-y-4">
-                <p class="text-xs text-slate-500">Guarda una copia de todos tus registros financieros actuales en tu app de Archivos (iCloud).</p>
+                <p class="text-xs text-slate-500">Guarda una copia de todos tus registros en tu app de Archivos (iCloud).</p>
                 <button @click="store.exportarDatos" class="w-full bg-lightblue text-navy p-4 rounded-2xl font-black text-xs active:scale-[0.98]">RESPALDO ICLOUD</button>
               </div>
               <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 text-center space-y-4">
-                <p class="text-xs text-slate-500">Restaura un archivo <span class="font-mono text-lightblue text-[10px]">.json</span> previamente descargado.</p>
+                <p class="text-xs text-slate-500">Restaura un archivo <span class="font-mono text-lightblue text-[10px]">.json</span>.</p>
                 <input type="file" @change="handleFileUpload" accept=".json" class="text-xs text-slate-500 w-full bg-slate-800 p-4 rounded-2xl border border-slate-700">
               </div>
               <button @click="view = 'home'" class="w-full text-slate-500 font-bold text-xs mt-8">VOLVER AL DASHBOARD</button>
             </div>
 
             <div v-else class="space-y-6">
+              
+              <div v-if="view === 'config-salario'">
+                <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">¿Cuánto ganas por quincena?</label>
+                <input v-model="form.salario" type="number" min="0" inputmode="decimal" @keydown="['-', 'e', '+'].includes($event.key) && $event.preventDefault()" placeholder="0.00" class="w-full bg-slate-800 p-4 rounded-xl mt-2 text-3xl font-black outline-none border border-slate-700 shadow-inner">
+              </div>
+
+              <div v-if="view === 'add-tarjeta'">
+                <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Nombre de la Tarjeta</label>
+                <input v-model="form.concepto" type="text" placeholder="Ej. Nu, BBVA" class="w-full bg-slate-800 p-4 rounded-xl mt-2 border border-slate-700 outline-none text-sm shadow-inner mb-4">
+                <div class="flex space-x-4">
+                  <div class="flex-1">
+                    <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Día de Corte</label>
+                    <input v-model="form.dia_corte" type="number" min="1" max="31" inputmode="numeric" placeholder="Ej. 15" class="w-full bg-slate-800 p-4 rounded-xl mt-2 border border-slate-700 outline-none text-sm shadow-inner text-center">
+                  </div>
+                  <div class="flex-1">
+                    <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Día Límite</label>
+                    <input v-model="form.dia_pago" type="number" min="1" max="31" inputmode="numeric" placeholder="Ej. 5" class="w-full bg-slate-800 p-4 rounded-xl mt-2 border border-slate-700 outline-none text-sm shadow-inner text-center">
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="view === 'add-msi' || view === 'edit-msi'">
+                <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">¿Con qué tarjeta se pagó?</label>
+                <select v-model="form.tarjeta_id" class="w-full bg-slate-800 p-4 rounded-xl mt-2 outline-none border border-slate-700 text-sm shadow-inner appearance-none cursor-pointer mb-4">
+                  <option value="" disabled selected>Elige una tarjeta...</option>
+                  <option v-for="t in store.tarjetas" :key="t.id" :value="t.id">{{ t.nombre }}</option>
+                </select>
+              </div>
+
               <div v-if="view === 'pay-msi' || view === 'pay-servicio'">
                 <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Seleccionar compromiso</label>
                 <select v-model="form.compromiso_id" v-if="view === 'pay-msi'" class="w-full bg-slate-800 p-4 rounded-xl mt-2 outline-none border border-slate-700 text-sm shadow-inner appearance-none cursor-pointer">
@@ -250,7 +367,7 @@
                 </select>
               </div>
 
-              <div v-if="!view.includes('pay')">
+              <div v-if="!view.includes('pay') && view !== 'add-tarjeta' && view !== 'config-salario'">
                 <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Concepto</label>
                 <select v-if="view === 'add-servicio'" v-model="form.concepto" class="w-full bg-slate-800 p-4 rounded-xl mt-2 border border-slate-700 outline-none text-sm appearance-none cursor-pointer shadow-inner">
                   <option value="" disabled selected>Selecciona servicio...</option>
@@ -260,18 +377,20 @@
                 <input v-if="view === 'add-servicio' && form.concepto === 'Otro'" v-model="form.concepto_custom" type="text" placeholder="Nombre del servicio" class="w-full bg-slate-800 p-4 rounded-xl mt-2 border border-slate-700 text-sm shadow-inner">
               </div>
 
-              <div v-if="!view.includes('pay')">
-                <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Monto ($)</label>
+              <div v-if="!view.includes('pay') && view !== 'add-tarjeta' && view !== 'config-salario'">
+                <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">
+                  {{ (view === 'add-msi' || view === 'edit-msi') ? 'Monto Total de la Compra ($)' : 'Monto ($)' }}
+                </label>
                 <input v-model="form.monto" type="number" min="0" inputmode="decimal" @keydown="['-', 'e', '+'].includes($event.key) && $event.preventDefault()" placeholder="0.00" class="w-full bg-slate-800 p-4 rounded-xl mt-2 text-3xl font-black outline-none border border-slate-700 shadow-inner">
               </div>
 
-              <div v-if="view === 'add-msi'">
-                <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Plazo (Meses)</label>
+              <div v-if="view === 'add-msi' || view === 'edit-msi'">
+                <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Plazo (Meses Totales)</label>
                 <input v-model="form.msi" type="number" min="1" inputmode="numeric" @keydown="['-', 'e', '+', '.'].includes($event.key) && $event.preventDefault()" placeholder="12" class="w-full bg-slate-800 p-4 rounded-xl mt-2 outline-none border border-slate-700 text-sm shadow-inner">
               </div>
 
               <div class="pt-6 space-y-3">
-                <button @click="guardar" :disabled="(view === 'add-servicio' && !form.concepto) || (view === 'add-servicio' && form.concepto === 'Otro' && !form.concepto_custom) || (view.includes('pay') && !form.compromiso_id && !form.servicio_id) || (!view.includes('pay') && view !== 'add-servicio' && !form.concepto) || (!view.includes('pay') && !form.monto)" class="w-full bg-lightblue text-navy p-4 rounded-xl font-black tracking-widest text-xs disabled:opacity-40 transition-opacity">GUARDAR</button>
+                <button @click="guardar" :disabled="!formValido" class="w-full bg-lightblue text-navy p-4 rounded-xl font-black tracking-widest text-xs disabled:opacity-40 transition-opacity">GUARDAR</button>
                 <button @click="view = view === 'edit-ingreso' ? 'manage-ingresos' : 'home'" class="w-full text-slate-500 font-bold text-xs uppercase hover:text-slate-300 transition-colors">Cerrar</button>
               </div>
             </div>
